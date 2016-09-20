@@ -164,6 +164,13 @@ class pgbouncer (
       auth_list    => $userlist,
       paramtmpfile => $paramtmpfile,
     }
+
+    #build the users base piece of the config file
+    concat::fragment { "${paramtmpfile}_users":
+      target  => $conffile,
+      content => template('pgbouncer/pgbouncer.ini.users.part1.erb'),
+      order   => '05',
+    }
   }
 
   #build the databases base piece of the config file
@@ -173,12 +180,7 @@ class pgbouncer (
     order   => '01',
   }
 
-  #build the users base piece of the config file
-  concat::fragment { "${paramtmpfile}_users":
-    target  => $conffile,
-    content => template('pgbouncer/pgbouncer.ini.users.part1.erb'),
-    order   => '05',
-  }
+
 
   # check if we have a database list and create entries
   if $databases {
